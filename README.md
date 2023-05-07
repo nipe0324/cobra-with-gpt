@@ -1,7 +1,8 @@
 # Cobra with GPT
 
-Inspired by [Web Summit Rio 2023: Building an app in 18 minutes with GitHub Copilot X](https://github.blog/2023-05-05-web-summit-rio-2023-building-an-app-in-18-minutes-with-github-copilot-x/)
+It's snake geme built by ChatGPT4. Inspired by [Web Summit Rio 2023: Building an app in 18 minutes with GitHub Copilot X](https://github.blog/2023-05-05-web-summit-rio-2023-building-an-app-in-18-minutes-with-github-copilot-x/)
 
+<img src="./snake.png" alt="Snake Game Play Image" title="Snake Game Play Image" width="520" />
 
 ## Prompts
 
@@ -213,3 +214,36 @@ To run the Snake game code provided above, follow these steps:
 3. Open the `index.html` file in a web browser (e.g., Chrome, Firefox, Safari, etc.). You should see the Snake game canvas, and the game will start automatically.
 
 Note: The provided JavaScript code is incomplete, and some functions are missing. You'll need to complete the code to make the game fully functional.
+
+#### How do I make the snake crash into the screen edge?
+
+To make the snake crash into the screen edges and end the game, you need to modify the `update` function in the `Snake` object within the `snake.js` file. The current code wraps the snake around the screen when it reaches the edges, but you can change it to check for collisions with the edges instead.
+
+Here's the updated `update` function:
+
+```js
+this.update = function () {
+    for (let i = 0; i < this.tail.length - 1; i++) {
+        this.tail[i] = this.tail[i + 1];
+    }
+
+    this.tail[this.total - 1] = { x: this.x, y: this.y };
+
+    this.x += this.xSpeed;
+    this.y += this.ySpeed;
+
+    // Check for collisions with the screen edges
+    if (this.x >= canvas.width || this.y >= canvas.height || this.x < 0 || this.y < 0) {
+        this.total = 0;
+        this.tail = [];
+        this.x = 0;
+        this.y = 0;
+        this.xSpeed = scale;
+        this.ySpeed = 0;
+    }
+}
+```
+
+Now, when the snake's head hits any screen edge, the game will reset the snake's size and position, and the snake will start moving to the right.
+
+Save the changes in the `snake.js` file, and refresh the `index.html` file in your browser to see the updated behavior.
