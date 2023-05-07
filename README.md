@@ -4,6 +4,8 @@ It's snake geme built by ChatGPT4. Inspired by [Web Summit Rio 2023: Building an
 
 <img src="./snake.png" alt="Snake Game Play Image" title="Snake Game Play Image" width="520" />
 
+[Play Now!!](https://nipe0324.github.io/cobra-with-gpt/)
+
 ## Prompts
 
 #### User: What is snake game?
@@ -247,3 +249,92 @@ this.update = function () {
 Now, when the snake's head hits any screen edge, the game will reset the snake's size and position, and the snake will start moving to the right.
 
 Save the changes in the `snake.js` file, and refresh the `index.html` file in your browser to see the updated behavior.
+
+#### How to add obstacles to the game?
+
+To add obstacles to the Snake game, you can create a new object called Obstacle and modify the game loop to include generating and drawing obstacles. Here's how you can do this:
+
+1. In the `snake.js` file, create the` Obstacle` object with a constructor function, similar to the `Fruit` object:
+
+```js
+function Obstacle() {
+    this.x;
+    this.y;
+
+    this.pickLocation = function () {
+        this.x = (Math.floor(Math.random() * columns - 1) + 1) * scale;
+        this.y = (Math.floor(Math.random() * rows - 1) + 1) * scale;
+    }
+
+    this.draw = function () {
+        ctx.fillStyle = "#00f";
+        ctx.fillRect(this.x, this.y, scale, scale);
+    }
+}
+```
+
+2. Create an array to store multiple obstacles and modify the `setup` function to generate a given number of obstacles:
+
+```js
+let obstacles = [];
+const numberOfObstacles = 5;
+
+(function setup() {
+    // ... existing code ...
+
+    for (let i = 0; i < numberOfObstacles; i++) {
+        const obstacle = new Obstacle();
+        obstacle.pickLocation();
+        obstacles.push(obstacle);
+    }
+
+    // ... existing code ...
+}());
+```
+
+3. Modify the game loop to draw the obstacles:
+
+```js
+window.setInterval(() => {
+    // ... existing code ...
+
+    for (const obstacle of obstacles) {
+        obstacle.draw();
+    }
+
+    // ... existing code ...
+}, 250);
+```
+
+4. Add a method to the `Snake` object to check for collisions with obstacles:
+
+```js
+this.collidesWithObstacle = function (obstacles) {
+    for (const obstacle of obstacles) {
+        if (this.x === obstacle.x && this.y === obstacle.y) {
+            return true;
+        }
+    }
+    return false;
+}
+```
+
+5. Update the `update` function to check for collisions with obstacles and reset the snake if it collides with any obstacle:
+
+```js
+this.update = function () {
+    // ... existing code ...
+
+    // Check for collisions with obstacles
+    if (this.collidesWithObstacle(obstacles)) {
+        this.total = 0;
+        this.tail = [];
+        this.x = 0;
+        this.y = 0;
+        this.xSpeed = scale;
+        this.ySpeed = 0;
+    }
+}
+```
+
+Now, when you save the changes in the `snake.js` file and refresh the `index.html` file in your browser, you should see obstacles on the game screen. The snake will reset its size and position if it collides with any of the obstacles. You can adjust the `numberOfObstacles` variable to change the number of obstacles in the game.

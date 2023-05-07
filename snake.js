@@ -1,11 +1,14 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-const scale = 20;
+const scale = 15;
+const numberOfObstacles = 5;
+
 const rows = canvas.height / scale;
 const columns = canvas.width / scale;
 
 let snake;
+let obstacles = [];
 
 (function setup() {
     snake = new Snake();
@@ -13,11 +16,21 @@ let snake;
 
     fruit.pickLocation();
 
+    for (let i = 0; i < numberOfObstacles; i++) {
+        const obstacle = new Obstacle();
+        obstacle.pickLocation();
+        obstacles.push(obstacle);
+    }
+
     window.setInterval(() => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         fruit.draw();
         snake.update();
         snake.draw();
+
+        for (const obstacle of obstacles) {
+            obstacle.draw();
+        }
 
         if (snake.eat(fruit)) {
             fruit.pickLocation();
@@ -93,6 +106,16 @@ function Snake() {
             this.xSpeed = scale;
             this.ySpeed = 0;
         }
+
+        // Check for collisions with obstacles
+        if (this.collidesWithObstacle(obstacles)) {
+            this.total = 0;
+            this.tail = [];
+            this.x = 0;
+            this.y = 0;
+            this.xSpeed = scale;
+            this.ySpeed = 0;
+        }
     }
 
     this.changeDirection = function(direction) {
@@ -133,6 +156,15 @@ function Snake() {
             }
         }
     }
+
+    this.collidesWithObstacle = function (obstacles) {
+      for (const obstacle of obstacles) {
+          if (this.x === obstacle.x && this.y === obstacle.y) {
+              return true;
+          }
+      }
+      return false;
+  }
 }
 
 function Fruit() {
@@ -146,6 +178,21 @@ function Fruit() {
 
     this.draw = function() {
         ctx.fillStyle = "#f00";
+        ctx.fillRect(this.x, this.y, scale, scale);
+    }
+}
+
+function Obstacle() {
+    this.x;
+    this.y;
+
+    this.pickLocation = function () {
+        this.x = (Math.floor(Math.random() * columns - 1) + 1) * scale;
+        this.y = (Math.floor(Math.random() * rows - 1) + 1) * scale;
+    }
+
+    this.draw = function () {
+        ctx.fillStyle = "#00f";
         ctx.fillRect(this.x, this.y, scale, scale);
     }
 }
